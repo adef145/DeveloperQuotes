@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Developer Quotes</string>
+    <string name="quote"><![CDATA[\"%1$s\"<br/><br/>by <b>%2$s</b>]]></string>
+</resources>
