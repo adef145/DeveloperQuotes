@@ -2,6 +2,31 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'com.github.kt3k.coveralls'
+apply plugin: 'jacoco'
+
+// region jacoco
+jacoco {
+    toolVersion = "$jacoco_version"
+}
+
+def jacocoDebugTree =
+                fileTree(dir: "${buildDir}/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/adefruandta") +
+                fileTree(dir: "${buildDir}/tmp/kotlin-classes/debug/com/adefruandta")
+def jacocoMainSrc = files(["${project.projectDir}/src/main/java"])
+def jacocoExecutionData = files("${buildDir}/jacoco/testDebugUnitTest.exec")
+
+task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']) {
+    reports {
+        csv.enabled = true
+        xml.enabled = true
+        html.enabled = true
+    }
+
+    sourceDirectories.from = files([jacocoMainSrc])
+    classDirectories.from = files([jacocoDebugTree])
+    executionData.from = files([jacocoExecutionData])
+}
 
 android {
     compileSdkVersion 29
@@ -60,4 +85,8 @@ dependencies {
 
     // Catapult
     implementation 'com.github.happyfresh:catapult:1.8.1'
+}
+
+coveralls {
+    jacocoReportPath 'build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml'
 }

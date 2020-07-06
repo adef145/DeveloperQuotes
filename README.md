@@ -1,1 +1,1 @@
-[![Build Status](https://travis-ci.org/adef145/DeveloperQuotes.svg?branch=master)](https://travis-ci.org/adef145/DeveloperQuotes)
+[![Build Status](https://travis-ci.org/adef145/DeveloperQuotes.svg?branch=master)](https://travis-ci.org/adef145/DeveloperQuotes) [![Coverage Status](https://coveralls.io/repos/github/adef145/DeveloperQuotes/badge.svg?branch=master)](https://coveralls.io/github/adef145/DeveloperQuotes?branch=master)
