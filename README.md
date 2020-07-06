@@ -1,0 +1,1 @@
+[![Build Status](https://travis-ci.org/adef145/DeveloperQuotes.svg?branch=master)](https://travis-ci.org/adef145/DeveloperQuotes)
