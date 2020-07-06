@@ -1,9 +1,11 @@
 package com.adefruandta.devquotes
 
 import io.mockk.MockKAnnotations
+import io.mockk.unmockkAll
 import io.reactivex.android.plugins.RxAndroidPlugins
 import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.schedulers.Schedulers
+import org.junit.After
 import org.junit.AfterClass
 import org.junit.Before
 import org.junit.BeforeClass
@@ -32,5 +34,10 @@ open class BaseTest {
     @Before
     open fun before() {
         MockKAnnotations.init(this, relaxed = true, relaxUnitFun = true)
+    }
+
+    @After
+    open fun after() {
+        unmockkAll()
     }
 }
