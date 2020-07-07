@@ -5,6 +5,7 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'com.github.kt3k.coveralls'
 apply plugin: 'jacoco'
 apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.firebase.appdistribution'
 
 // region jacoco
 jacoco {
@@ -41,6 +42,10 @@ android {
         versionName "1.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        firebaseAppDistribution {
+            serviceCredentialsFile = "app/developer-quotes-33afb-78085186f488.json"
+        }
     }
 
     buildTypes {
