@@ -4,9 +4,13 @@ import android.content.Intent
 import android.content.Intent.EXTRA_TEXT
 import android.view.View
 import com.adefruandta.devquotes.BaseTest
+import com.adefruandta.devquotes.model.Quote
+import com.adefruandta.devquotes.thirdparties.firebase.tracker.FirebaseTracker
+import com.adefruandta.devquotes.thirdparties.firebase.tracker.FirebaseTrackerEvent
 import com.adefruandta.devquotes.ui.component.quote.QuoteComponent
 import com.adefruandta.devquotes.ui.event.IntentRefreshQuote
 import com.adefruandta.devquotes.ui.event.IntentShareQuote
+import com.adefruandta.devquotes.ui.event.Loaded
 import com.happyfresh.happyarch.ComponentProvider
 import com.happyfresh.happyarch.EventObservable
 import io.mockk.*
@@ -27,7 +31,10 @@ class MainActivityTest : BaseTest() {
     @MockK
     lateinit var mainViewModel: MainViewModel
 
-    lateinit var activity: MainActivity
+    @MockK
+    lateinit var firebaseTrackerEvent: FirebaseTrackerEvent
+
+    private lateinit var activity: MainActivity
 
     override fun before() {
         super.before()
@@ -37,6 +44,8 @@ class MainActivityTest : BaseTest() {
         every { activity.componentProvider } returns componentProvider
         every { activity.quoteComponentView } returns quoteComponentView
         every { activity.mainViewModel } returns mainViewModel
+
+        FirebaseTracker.init(firebaseTrackerEvent)
     }
 
     @Test
@@ -47,10 +56,31 @@ class MainActivityTest : BaseTest() {
     }
 
     @Test
-    fun onCreate_test() {
-        activity.onCreate()
+    fun onDidCreate_test() {
+        activity.onDidCreate()
 
         mainViewModel.getQuote(eventObservable)
+    }
+
+    @Test
+    fun onDidResume_test() {
+        activity.quote = "Quote"
+
+        activity.onDidResume()
+
+        verify {
+            firebaseTrackerEvent.viewMainScreen("Quote")
+        }
+    }
+
+    @Test
+    fun onQuoteLoaded_test() {
+        activity.onQuoteLoaded(Loaded(Quote().apply {
+            sr = "Quote"
+            author = "Author"
+        }))
+
+        assert("Quote" == activity.quote)
     }
 
     @Test
@@ -77,6 +107,7 @@ class MainActivityTest : BaseTest() {
 
         verify {
             activity.startActivity(intent)
+            firebaseTrackerEvent.shareQuote("\"Quote\" by Author")
         }
     }
 
@@ -86,6 +117,7 @@ class MainActivityTest : BaseTest() {
 
         verify {
             mainViewModel.getQuote(eventObservable)
+            firebaseTrackerEvent.refreshQuote()
         }
     }
 }
