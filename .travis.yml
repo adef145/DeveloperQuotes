@@ -8,9 +8,6 @@ cache:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
     - $HOME/.android/build-cache
-branches:
-  only:
-    - master
 android:
   components:
     # Uncomment the lines below if you want to
@@ -37,5 +34,16 @@ android:
     - 'android-sdk-license-.+'
     - 'google-gdk-license-.+'
 script:
+    - echo $GOOGLE_SERVICES_JSON | base64 -d > app/google-services.json
     - ./gradlew jacocoTestReport
     - ./gradlew coveralls
+deploy:
+  provider: script
+  script:
+    - echo $SERVICE_CREDENTIALS_JSON | base64 -d > app/developer-quotes-33afb-78085186f488.json
+    - echo $RELEASE_JKS | base64 -d > app/release.jks
+    - echo $RELEASE_PROPERTIES | base64 -d > app/release.properties
+    - ./gradlew assembleRelease
+    - ./gradlew appDistributionUploadRelease
+  on:
+    branch: master

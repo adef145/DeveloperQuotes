@@ -30,6 +30,29 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']) {
     executionData.from = files([jacocoExecutionData])
 }
 
+if (project.hasProperty("release.properties") &&
+        new File(project.property("release.properties")).exists()) {
+    Properties releaseProperties = new Properties()
+    releaseProperties.load(new FileInputStream(file(project.property("release.properties"))))
+
+    android {
+        signingConfigs {
+            release {
+                storeFile file(releaseProperties['keystore'])
+                storePassword releaseProperties['keystore.password']
+                keyAlias releaseProperties['keystore.key.alias']
+                keyPassword releaseProperties['keystore.key.password']
+            }
+        }
+
+        buildTypes {
+            release {
+                signingConfig signingConfigs.release
+            }
+        }
+    }
+}
+
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
