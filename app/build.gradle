@@ -4,6 +4,8 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.github.kt3k.coveralls'
 apply plugin: 'jacoco'
+apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.firebase.appdistribution'
 
 // region jacoco
 jacoco {
@@ -28,6 +30,29 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']) {
     executionData.from = files([jacocoExecutionData])
 }
 
+if (project.hasProperty("release.properties") &&
+        new File(project.property("release.properties")).exists()) {
+    Properties releaseProperties = new Properties()
+    releaseProperties.load(new FileInputStream(file(project.property("release.properties"))))
+
+    android {
+        signingConfigs {
+            release {
+                storeFile file(releaseProperties['keystore'])
+                storePassword releaseProperties['keystore.password']
+                keyAlias releaseProperties['keystore.key.alias']
+                keyPassword releaseProperties['keystore.key.password']
+            }
+        }
+
+        buildTypes {
+            release {
+                signingConfig signingConfigs.release
+            }
+        }
+    }
+}
+
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
@@ -40,6 +65,10 @@ android {
         versionName "1.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        firebaseAppDistribution {
+            serviceCredentialsFile = "app/developer-quotes-33afb-78085186f488.json"
+        }
     }
 
     buildTypes {
@@ -83,8 +112,12 @@ dependencies {
     implementation "androidx.room:room-rxjava2:2.2.5"
     kapt "androidx.room:room-compiler:2.2.5"
 
-    // Catapult
+    // HappyFresh Github
     implementation 'com.github.happyfresh:catapult:1.8.1'
+    implementation "com.github.happyfresh.HappySupportAndroid:happytracker:1.5.1"
+
+    // Firebase
+    implementation 'com.google.firebase:firebase-analytics:17.4.3'
 }
 
 coveralls {
