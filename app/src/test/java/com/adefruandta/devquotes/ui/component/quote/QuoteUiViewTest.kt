@@ -102,8 +102,8 @@ class QuoteUiViewTest : BaseTest() {
 
         verify {
             progressView.visibility = View.VISIBLE
-            shareImageButton.visibility = View.GONE
-            refreshImageButton.visibility = View.GONE
+            shareImageButton.visibility = View.INVISIBLE
+            refreshImageButton.visibility = View.INVISIBLE
         }
     }
 }

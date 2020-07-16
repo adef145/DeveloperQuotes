@@ -14,6 +14,9 @@ interface QuoteDao {
     @Query("SELECT * FROM quotes WHERE id = :id")
     fun get(id: String): Single<Quote>
 
+    @Query("SELECT * FROM quotes ORDER BY RANDOM() LIMIT 1")
+    fun random(): Single<Quote>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(quote: Quote): Completable
 }

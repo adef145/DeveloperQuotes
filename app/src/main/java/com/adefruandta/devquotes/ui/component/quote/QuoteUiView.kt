@@ -55,7 +55,7 @@ class QuoteUiView(view: View, eventObservable: EventObservable) :
 
     fun showProgress() {
         progressView.visibility = View.VISIBLE
-        shareImageButton.visibility = View.GONE
-        refreshImageButton.visibility = View.GONE
+        shareImageButton.visibility = View.INVISIBLE
+        refreshImageButton.visibility = View.INVISIBLE
     }
 }
