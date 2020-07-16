@@ -27,6 +27,9 @@ class Quote : Serializable {
     @SerializedName("author")
     var author: String = ""
 
+    @ColumnInfo(name = "favourite")
+    var favourite: Boolean = false
+
     fun text(): String {
         return sr ?: en
     }

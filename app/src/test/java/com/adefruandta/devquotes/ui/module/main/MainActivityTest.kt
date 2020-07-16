@@ -10,6 +10,7 @@ import com.adefruandta.devquotes.thirdparties.firebase.tracker.FirebaseTrackerEv
 import com.adefruandta.devquotes.ui.component.quote.QuoteComponent
 import com.adefruandta.devquotes.ui.event.IntentRefreshQuote
 import com.adefruandta.devquotes.ui.event.IntentShareQuote
+import com.adefruandta.devquotes.ui.event.IntentUpdateQuote
 import com.adefruandta.devquotes.ui.event.Loaded
 import com.happyfresh.happyarch.ComponentProvider
 import com.happyfresh.happyarch.EventObservable
@@ -118,6 +119,16 @@ class MainActivityTest : BaseTest() {
         verify {
             mainViewModel.getQuote(eventObservable)
             firebaseTrackerEvent.refreshQuote()
+        }
+    }
+
+    @Test
+    fun intentUpdateQuote() {
+        val quote = Quote()
+        activity.intentUpdateQuote(IntentUpdateQuote(quote))
+
+        verify {
+            mainViewModel.saveQuote(eventObservable, quote)
         }
     }
 }

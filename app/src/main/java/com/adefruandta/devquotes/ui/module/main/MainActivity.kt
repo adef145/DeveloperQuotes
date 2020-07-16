@@ -12,6 +12,7 @@ import com.adefruandta.devquotes.thirdparties.firebase.tracker.FirebaseTracker
 import com.adefruandta.devquotes.ui.component.quote.QuoteComponent
 import com.adefruandta.devquotes.ui.event.IntentRefreshQuote
 import com.adefruandta.devquotes.ui.event.IntentShareQuote
+import com.adefruandta.devquotes.ui.event.IntentUpdateQuote
 import com.adefruandta.devquotes.ui.event.Loaded
 import com.adefruandta.devquotes.ui.module.BaseActivity
 import com.happyfresh.happyarch.Subscribe
@@ -72,5 +73,10 @@ class MainActivity : BaseActivity() {
         mainViewModel.getQuote(eventObservable)
 
         FirebaseTracker.refreshQuote()
+    }
+
+    @Subscribe(QuoteComponent::class)
+    fun intentUpdateQuote(intentUpdateQuote: IntentUpdateQuote) {
+        mainViewModel.saveQuote(eventObservable, intentUpdateQuote.quote)
     }
 }

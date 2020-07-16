@@ -3,12 +3,15 @@ package com.adefruandta.devquotes.ui.component.quote
 import android.text.Html
 import android.text.Spanned
 import android.view.View
+import android.widget.CompoundButton
 import android.widget.ImageButton
 import android.widget.TextView
+import androidx.appcompat.widget.AppCompatCheckBox
 import com.adefruandta.devquotes.BaseTest
 import com.adefruandta.devquotes.model.Quote
 import com.adefruandta.devquotes.ui.event.IntentRefreshQuote
 import com.adefruandta.devquotes.ui.event.IntentShareQuote
+import com.adefruandta.devquotes.ui.event.IntentUpdateQuote
 import com.happyfresh.happyarch.EventObservable
 import io.mockk.*
 import io.mockk.impl.annotations.MockK
@@ -32,6 +35,9 @@ class QuoteUiViewTest : BaseTest() {
     lateinit var refreshImageButton: ImageButton
 
     @MockK
+    lateinit var favouriteCheckBox: AppCompatCheckBox
+
+    @MockK
     lateinit var progressView: View
 
     val quoteString = "<![CDATA[\"%1s\"<br/><br/>by <b>%2s</b>]]>"
@@ -46,6 +52,7 @@ class QuoteUiViewTest : BaseTest() {
         every { uiView.quoteTextView } returns quoteTextView
         every { uiView.shareImageButton } returns shareImageButton
         every { uiView.refreshImageButton } returns refreshImageButton
+        every { uiView.favouriteCheckBox } returns favouriteCheckBox
         every { uiView.progressView } returns progressView
         every { uiView.quoteString } returns quoteString
     }
@@ -54,12 +61,16 @@ class QuoteUiViewTest : BaseTest() {
     fun setup_test() {
         val shareImageButtonOnClickSlot = slot<View.OnClickListener>()
         val refreshImageButtonOnClickSlot = slot<View.OnClickListener>()
+        val favouriteOnCheckedChangeSlot = slot<CompoundButton.OnCheckedChangeListener>()
+        val quote = Quote()
 
+        uiView.quote = quote
         uiView.setup()
 
         verify {
             shareImageButton.setOnClickListener(capture(shareImageButtonOnClickSlot))
             refreshImageButton.setOnClickListener(capture(refreshImageButtonOnClickSlot))
+            favouriteCheckBox.setOnCheckedChangeListener(capture(favouriteOnCheckedChangeSlot))
         }
 
         every { quoteTextView.text } returns "\"Quote\" by Author"
@@ -72,6 +83,19 @@ class QuoteUiViewTest : BaseTest() {
         refreshImageButtonOnClickSlot.captured.onClick(view)
 
         verify { eventObservable.emit(QuoteComponent::class.java, any<IntentRefreshQuote>()) }
+
+        favouriteOnCheckedChangeSlot.captured.onCheckedChanged(favouriteCheckBox, true)
+
+        val intentChangeFavouriteFlagSlot = slot<IntentUpdateQuote>()
+        verify {
+            eventObservable.emit(
+                QuoteComponent::class.java,
+                capture(intentChangeFavouriteFlagSlot)
+            )
+        }
+
+        assert(quote.favourite)
+        assert(quote == intentChangeFavouriteFlagSlot.captured.quote)
     }
 
     @Test
@@ -93,6 +117,7 @@ class QuoteUiViewTest : BaseTest() {
             progressView.visibility = View.GONE
             shareImageButton.visibility = View.VISIBLE
             refreshImageButton.visibility = View.VISIBLE
+            favouriteCheckBox.visibility = View.VISIBLE
         }
     }
 
@@ -104,6 +129,7 @@ class QuoteUiViewTest : BaseTest() {
             progressView.visibility = View.VISIBLE
             shareImageButton.visibility = View.INVISIBLE
             refreshImageButton.visibility = View.INVISIBLE
+            favouriteCheckBox.visibility = View.INVISIBLE
         }
     }
 }

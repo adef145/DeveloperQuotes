@@ -18,23 +18,33 @@ class GetQuoteUseCase(
         val lastQuoteLocal = (preferences.quoteId?.let {
             quoteDao.get(it).toObservable()
         } ?: Observable.empty())
-            .onErrorResumeNext(Observable.empty())
             .subscribeOn(Schedulers.io())
             .observeOn(Schedulers.io())
+            .onErrorResumeNext(Observable.empty())
 
         val randomQuoteLocal = quoteDao.random()
             .toObservable()
-            .onErrorResumeNext(lastQuoteLocal)
             .subscribeOn(Schedulers.io())
             .observeOn(Schedulers.io())
+            .onErrorResumeNext(lastQuoteLocal)
 
         return quoteService.random().flatMap {
-            quoteDao.insert(it)
+            quoteDao.get(it.id)
+                .toObservable()
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
-                .subscribe()
-            preferences.quoteId = it.id
-            Observable.just(it)
-        }.onErrorResumeNext(randomQuoteLocal)
+                .onErrorReturnItem(it)
+        }.flatMap {quote ->
+            preferences.quoteId = quote.id
+            quoteDao.insert(quote)
+                .toSingleDefault(1)
+                .toObservable()
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .concatMap { Observable.just(quote) }
+                .onErrorReturnItem(quote)
+        }.observeOn(Schedulers.io())
+            .subscribeOn(Schedulers.io())
+            .onErrorResumeNext(randomQuoteLocal)
     }
 }

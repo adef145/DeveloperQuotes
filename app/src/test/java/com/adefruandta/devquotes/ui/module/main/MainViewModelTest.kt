@@ -6,6 +6,7 @@ import com.adefruandta.devquotes.domain.Preferences
 import com.adefruandta.devquotes.domain.database.QuoteDao
 import com.adefruandta.devquotes.domain.service.QuoteService
 import com.adefruandta.devquotes.domain.usecase.GetQuoteUseCase
+import com.adefruandta.devquotes.domain.usecase.SaveQuoteUseCase
 import com.adefruandta.devquotes.model.Quote
 import com.adefruandta.devquotes.ui.component.quote.QuoteComponent
 import com.adefruandta.devquotes.ui.event.Error
@@ -36,6 +37,9 @@ class MainViewModelTest : BaseTest() {
     lateinit var getQuoteDisposable: Disposable
 
     @MockK
+    lateinit var saveQuoteDisposable: Disposable
+
+    @MockK
     lateinit var eventObservable: EventObservable
 
     lateinit var viewModel: MainViewModel
@@ -44,6 +48,7 @@ class MainViewModelTest : BaseTest() {
         super.before()
         viewModel = spyk(MainViewModel(application))
         viewModel.getQuoteDisposable = getQuoteDisposable
+        viewModel.saveQuoteDisposable = saveQuoteDisposable
 
         every { viewModel.preferences } returns preferences
         every { viewModel.quoteDao } returns quoteDao
@@ -79,6 +84,22 @@ class MainViewModelTest : BaseTest() {
         verify {
             getQuoteDisposable.dispose()
             eventObservable.emit(QuoteComponent::class.java, any<Loading>())
+            eventObservable.emit(QuoteComponent::class.java, capture(errorSlot))
+        }
+        assert(throwable == errorSlot.captured.throwable)
+    }
+
+    @Test
+    fun saveQuote_onError_test() {
+        val throwable = Throwable()
+        mockkConstructor(SaveQuoteUseCase::class)
+        every { anyConstructed<SaveQuoteUseCase>().observe() } returns Observable.error(throwable)
+
+        viewModel.saveQuote(eventObservable, Quote())
+
+        val errorSlot = slot<Error>()
+        verify {
+            saveQuoteDisposable.dispose()
             eventObservable.emit(QuoteComponent::class.java, capture(errorSlot))
         }
         assert(throwable == errorSlot.captured.throwable)
