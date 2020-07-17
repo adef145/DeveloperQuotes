@@ -1,4 +1,4 @@
-package com.adefruandta.devquotes.ui.module.main
+package com.adefruandta.devquotes.ui.module.quote
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
@@ -19,7 +19,7 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.functions.Consumer
 import io.reactivex.internal.functions.Functions.emptyConsumer
 
-class MainViewModel(application: Application) : AndroidViewModel(application) {
+class QuoteViewModel(application: Application) : AndroidViewModel(application) {
 
     val quoteService: QuoteService by lazy {
         Service.quoteService

@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <fragment
-        android:id="@+id/fragment_quote"
-        android:name="com.adefruandta.devquotes.ui.module.quote.QuoteFragment"
+    <ViewStub
+        android:id="@+id/component_quote_stub"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:layout="@layout/fragment_quote" />
+        android:layout_margin="8dp"
+        android:layout="@layout/component_quote" />
 </LinearLayout>

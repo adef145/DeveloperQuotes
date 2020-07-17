@@ -1,4 +1,4 @@
-package com.adefruandta.devquotes.ui.module.main
+package com.adefruandta.devquotes.ui.module.quote
 
 import android.app.Application
 import com.adefruandta.devquotes.BaseTest
@@ -19,7 +19,7 @@ import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import org.junit.Test
 
-class MainViewModelTest : BaseTest() {
+class QuoteViewModelTest : BaseTest() {
 
     @MockK
     lateinit var application: Application

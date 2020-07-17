@@ -1,4 +1,4 @@
-package com.adefruandta.devquotes.ui.module.main
+package com.adefruandta.devquotes.ui.module.quote
 
 import android.content.Intent
 import android.content.Intent.EXTRA_TEXT
@@ -12,13 +12,14 @@ import com.adefruandta.devquotes.ui.event.IntentRefreshQuote
 import com.adefruandta.devquotes.ui.event.IntentShareQuote
 import com.adefruandta.devquotes.ui.event.IntentUpdateQuote
 import com.adefruandta.devquotes.ui.event.Loaded
+import com.adefruandta.devquotes.ui.module.main.MainActivity
 import com.happyfresh.happyarch.ComponentProvider
 import com.happyfresh.happyarch.EventObservable
 import io.mockk.*
 import io.mockk.impl.annotations.MockK
 import org.junit.Test
 
-class MainActivityTest : BaseTest() {
+class QuoteFragmentTest : BaseTest() {
 
     @MockK
     lateinit var eventObservable: EventObservable
