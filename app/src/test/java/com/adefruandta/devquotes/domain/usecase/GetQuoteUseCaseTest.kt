@@ -36,8 +36,8 @@ class GetQuoteUseCaseTest : BaseTest() {
         val quote = Quote().apply {
             id = "ID"
         }
-        every { preferences.quoteId } returns "Quote Id"
-        every { quoteDao.get("Quote Id") } returns Single.just(quote)
+        every { preferences.quoteId } returns quote.id
+        every { quoteDao.get(quote.id) } returns Single.just(quote)
         every { quoteDao.random() } returns Single.just(quote)
         every { quoteDao.insert(quote) } returns Completable.complete()
         every { quoteService.random() } returns Observable.just(quote)
@@ -57,6 +57,7 @@ class GetQuoteUseCaseTest : BaseTest() {
             id = "ID"
         }
         every { preferences.quoteId } returns null
+        every { quoteDao.get(quote.id) } returns Single.just(quote)
         every { quoteDao.random() } returns Single.just(quote)
         every { quoteDao.insert(quote) } returns Completable.complete()
         every { quoteService.random() } returns Observable.just(quote)

@@ -28,22 +28,23 @@ class GetQuoteUseCase(
             .observeOn(Schedulers.io())
             .onErrorResumeNext(lastQuoteLocal)
 
-        return quoteService.random().flatMap {
-            quoteDao.get(it.id)
-                .toObservable()
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
-                .onErrorReturnItem(it)
-        }.flatMap {quote ->
-            preferences.quoteId = quote.id
-            quoteDao.insert(quote)
-                .toSingleDefault(1)
-                .toObservable()
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
-                .concatMap { Observable.just(quote) }
-                .onErrorReturnItem(quote)
-        }.observeOn(Schedulers.io())
+        return quoteService.random()
+            .flatMap {
+                quoteDao.get(it.id)
+                    .toObservable()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(Schedulers.io())
+                    .onErrorReturnItem(it)
+            }.flatMap { quote ->
+                preferences.quoteId = quote.id
+                quoteDao.insert(quote)
+                    .toSingleDefault(1)
+                    .toObservable()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(Schedulers.io())
+                    .concatMap { Observable.just(quote) }
+                    .onErrorReturnItem(quote)
+            }.observeOn(Schedulers.io())
             .subscribeOn(Schedulers.io())
             .onErrorResumeNext(randomQuoteLocal)
     }
